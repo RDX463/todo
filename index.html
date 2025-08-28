@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusDaily - Todo App</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Top Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">⚡ NexusDaily</div>
+            <div class="date-display" id="dateDisplay">Today</div>
+        </div>
+        <div class="header-center">
+            <div class="quick-add">
+                <button class="btn btn--sm voice-btn" id="voiceBtn" title="Voice Command">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <input type="text" class="quick-input" id="quickInput" placeholder="Quick add task..." />
+                <button class="btn btn--primary btn--sm" id="quickAddBtn">Add</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="focus-timer">
+                <div class="timer-display" id="timerDisplay">25:00</div>
+                <button class="btn btn--sm" id="timerBtn">Focus</button>
+            </div>
+            <div class="streak-counter">
+                <span>🔥 <span id="streakCount">0</span></span>
+            </div>
+            <button class="btn btn--sm" id="settingsBtn">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="nav-section">
+                <button class="nav-btn active" data-view="today">
+                    <i class="fas fa-star"></i>
+                    <span>Today</span>
+                    <div class="nav-count" id="todayCount">0</div>
+                </button>
+                <button class="nav-btn" data-view="tasks">
+                    <i class="fas fa-list"></i>
+                    <span>All Tasks</span>
+                    <div class="nav-count" id="allTasksCount">0</div>
+                </button>
+                <button class="nav-btn" data-view="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Today View -->
+            <div class="view active" id="todayView">
+                <div class="view-header">
+                    <div class="view-title">
+                        <h1>Today</h1>
+                        <div class="completion-summary">
+                            <span id="completedToday">0</span> of <span id="totalToday">0</span> completed
+                        </div>
+                    </div>
+                    <div class="view-controls">
+                        <button class="btn btn--primary" id="addTaskBtn">
+                            <i class="fas fa-plus"></i>
+                            Add Task
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state">
+                    <div class="empty-icon">🚀</div>
+                    <h2>Ready to be productive?</h2>
+                    <p>Start by creating your first task or use the quick add above.</p>
+                    <button class="btn btn--primary" id="addFirstTask">Create Your First Task</button>
+                </div>
+
+                <!-- Tasks List -->
+                <div id="tasksList" class="tasks-list hidden">
+                    <!-- Tasks will be rendered here -->
+                </div>
+            </div>
+
+            <!-- All Tasks View -->
+            <div class="view" id="tasksView">
+                <div class="view-header">
+                    <h1>All Tasks</h1>
+                </div>
+                <div id="allTasksList" class="tasks-list">
+                    <!-- All tasks will be rendered here -->
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div class="view" id="analyticsView">
+                <div class="view-header">
+                    <h1>Analytics</h1>
+                </div>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Productivity Stats</h3>
+                        <div class="metric-row">
+                            <div class="metric">
+                                <div class="metric-value" id="totalCompleted">0</div>
+                                <div class="metric-label">Tasks Completed</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" id="currentStreak">0</div>
+                                <div class="metric-label">Day Streak</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Task Modal -->
+    <div id="taskModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Create New Task</h2>
+                <button class="modal-close" id="taskModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label class="form-label">Task Title</label>
+                        <input type="text" class="form-control" id="taskTitle" placeholder="What needs to be done?" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="taskDescription" rows="3" placeholder="Add details..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select class="form-control" id="taskCategory">
+                                <option value="work">💼 Work</option>
+                                <option value="personal">🏠 Personal</option>
+                                <option value="health">🏃‍♂️ Health</option>
+                                <option value="learning">📚 Learning</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Priority</label>
+                            <select class="form-control" id="taskPriority">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="taskDueDate">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Due Time</label>
+                            <input type="time" class="form-control" id="taskDueTime">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--secondary" id="taskModalCancel">Cancel</button>
+                <button class="btn btn--primary" id="taskModalSave">Save Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close" id="settingsModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Timer Settings</h3>
+                    <div class="form-group">
+                        <label class="form-label">Pomodoro Length (minutes)</label>
+                        <input type="number" class="form-control" id="pomodoroLength" value="25" min="15" max="60">
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableNotifications" checked>
+                            <span>Enable notifications</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="enableVoice" checked>
+                            <span>Enable voice commands</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--primary" id="saveSettings">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Command Indicator -->
+    <div id="voiceIndicator" class="voice-indicator hidden">
+        <div class="voice-animation"></div>
+        <p>Listening for command...</p>
+        <p class="voice-hint">Try: "Add task", "Start timer"</p>
+    </div>
+
+    <!-- Notifications Container -->
+    <div id="notifications" class="notifications-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
